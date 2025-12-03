@@ -59,8 +59,10 @@ a:hover {
 }
 
 .navbar.scrolled {
-  background: var(--onyx);
+  background: #47405644;
   box-shadow: 0 2px 15px #00000088;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
 }
 
 .navbar .logo {
@@ -324,4 +326,30 @@ a:hover {
 .hamburger.active div:nth-child(3) {
   transform: rotate(-45deg) translateY(-12px);
 }
+
+    /* Dark TOS box style */
+    #tos-content {
+      background-color: #1a1a1a; /* dark gray */
+      color: #f1f1f1; /* light text */
+      padding: 20px;
+      border-radius: 10px;
+      text-align: left;
+      max-width: 900px;
+      margin: auto;
+      line-height: 1.6;
+      overflow-x: auto; /* in case of long lines */
+    }
+
+    /* Optional: style headers inside TOS */
+    #tos-content h1,
+    #tos-content h2,
+    #tos-content h3 {
+      color: #ffffff;
+    }
+
+    /* Optional: style links inside TOS */
+    #tos-content a {
+      color: #6ab0f3;
+      text-decoration: underline;
+    }
 
