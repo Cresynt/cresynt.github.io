@@ -17,16 +17,24 @@
       <input type="search" id="search" placeholder="Search">
       <div id="search-results" style="position:absolute; background:#fff; border:1px solid #ccc; max-height:300px; overflow-y:auto; width:200px; display:none; z-index:1000;"></div>
     </nav>
+      
+    <div class="hamburger" id="hamburger"><div></div><div></div><div></div>
+      </div>
+      <nav class="side-menu" id="side-menu">
+          <ul>
+              <li><a href="index.html">Home</a></li>
+              <li><a href="projects.html">Projects</a></li>
+              <li><a href="about.html">About</a></li>
+          </ul>
+      </nav>
   </header>
 
   <main class="content">
     <div id="intro">
-      <p style="padding:15px;">Welcome to <strong>CreSynt Studios</strong>! 
-        <a href="data.html?id=about" style="color:#ffd700;">Learn more...</a>
-      </p>
     </div>
 
-    <h2 style="border-bottom: solid 2px #ffff0033; font-size: 2rem;">Our Projects</h2>
+
+    <h2 style="font-size: 2rem;">Our Projects</h2>
     <section id="catalogue">
       <div class="category-card" style="filter: grayscale(0%); cursor:pointer;">
         <img src="images/unavailable.png">
@@ -146,6 +154,23 @@
     }
   `;
   document.head.appendChild(style);
+    
+const hamburger = document.getElementById('hamburger');
+const sideMenu = document.getElementById('side-menu');
+
+hamburger.addEventListener('click', () => {
+  hamburger.classList.toggle('active');
+  sideMenu.classList.toggle('active');
+});
+
+// Optional: close menu when clicking a link
+sideMenu.querySelectorAll('a').forEach(link => {
+  link.addEventListener('click', () => {
+    hamburger.classList.remove('active');
+    sideMenu.classList.remove('active');
+  });
+});
+
 </script>
 
 <footer id="copyright-footer">
