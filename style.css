@@ -1,0 +1,45 @@
+:root {
+  --onyx: #16131c;
+  --vintage-grape: #474056;
+  --rosy-granite: #757083;
+  --cool-steel: #8a95a5;
+  --ash-grey: #b9c6ae;
+}
+
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: var(--onyx);
+  color: var(--ash-grey);
+}
+
+.navbar {
+  background: var(--vintage-grape);
+  padding: 1rem 0;
+}
+
+.nav-container {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 0 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.brand img {
+  height: 40px;
+  padding: 0px;
+}
+
+.links a {
+  margin-left: 1rem;
+  color: var(--cool-steel);
+  text-decoration: none;
+}
+
+.content {
+  max-width: 1000px;
+  margin: 2rem auto;
+  padding: 0 1rem;
+}
