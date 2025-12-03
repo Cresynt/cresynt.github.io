@@ -21,5 +21,5 @@ Terms of Service for CresyntStudios
  7. **Limitation of Liability**
  The Service is provided on an "as-is" and "as-available" basis. CresyntStudios makes no warranties, either express or implied, regarding the operation, stability, or availability of the Service. CresyntStudios shall not be liable for any damages of any kind arising from the use of the Service, including but not limited to direct, indirect, incidental, punitive, and consequential damages.
 
-  8 **Changes to Terms**
-  CresyntStudios reserves the right to modify these terms at any time. Users are responsible for regularly reviewing these   terms. Continued use of the Service following any changes shall constitute acceptance of such modifications.
+ 8. **Changes to Terms**
+ CresyntStudios reserves the right to modify these terms at any time. Users are responsible for regularly reviewing these   terms. Continued use of the Service following any changes shall constitute acceptance of such modifications.
