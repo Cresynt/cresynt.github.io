@@ -427,6 +427,7 @@ nav .active-temp {
 .article-content {
   max-width: 900px;
   margin: 3rem auto;
+  font-family: "segoe UI" 
 }
 
 .article-content h1,
@@ -487,6 +488,15 @@ nav .active-temp {
   border-radius: 6px;
   display: block;
   object-fit: cover;
+}
+
+.trans-text {
+    background: var(--trans);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent; 
+  font-weight: 600;
 }
 
 /* ==========================================================================
