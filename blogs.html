@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>arrow_left - blogs</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="color-scheme" content="light dark" />
+    <meta name="theme-color" content="#111111" />
+
+    <link id="theme-style" rel="stylesheet" href="light.css" />
+    <link id="style" rel="stylesheet" href="style.css" />
+
+    <link rel="icon" href="images/favicon.ico" />
+    <link rel="apple-touch-icon" href="images/heart.png" />
+
+    <script src="common.js" type="module"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Alata&display=swap" rel="stylesheet" />
+
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+
+    <style>
+      /* Hide admin elements by default */
+      .admin-toolbar, .item-actions {
+        display: none;
+      }
+
+      .admin-toolbar {
+        justify-content: flex-end;
+        margin-bottom: 2rem;
+      }
+      .btn-add {
+        background: none;
+        border: 1px solid #333;
+        color: inherit;
+        padding: 6px 14px;
+        cursor: pointer;
+        font-family: 'Alata', sans-serif;
+        border-radius: 4px;
+        font-size: 0.85rem;
+        transition: 0.2s;
+      }
+      .btn-add:hover { border-color: #4caf50; color: #4caf50; }
+      
+      .thought-item { position: relative; }
+      
+      .item-actions {
+        position: absolute;
+        top: 0;
+        right: 0;
+        gap: 12px;
+      }
+      .action-link {
+        background: none;
+        border: none;
+        font-family: 'Alata', sans-serif;
+        font-size: 0.7rem;
+        cursor: pointer;
+        letter-spacing: 1px;
+        opacity: 0.5;
+        transition: 0.2s;
+      }
+      .action-link:hover { opacity: 1; }
+      .edit-color { color: #4caf50; }
+      .delete-color { color: #ff5252; }
+    </style>
+  </head>
+
+  <body>
+    <div class="container">
+      <header>
+        <nav>
+          <a href="index.html">home</a>
+          <a href="projects.html">projects</a>
+          <a href="blogs.html" class="active">blogs</a>
+          <a href="about.html">about</a>
+        </nav>
+      </header>
+
+      <main>
+        <section class="intro">
+          <p class="prefix"></p>
+          <h1>blogs</h1>
+          <p class="subtitle"></p>
+        </section>
+
+        <section class="articles">
+          <div class="admin-toolbar" id="admin-toolbar">
+            <button class="btn-add" onclick="window.location.href='builder.html'">+ write new post</button>
+          </div>
+          
+          <ul id="articles-list" class="articles-list">
+            <li>loading...</li>
+          </ul>
+        </section>
+      </main>
+
+      <footer>
+        <p>arrow_left</p>
+      </footer>
+    </div>
+
+    <!-- Theme Script -->
+    <script>
+      const themeLink = document.getElementById("theme-style");
+      const savedTheme = localStorage.getItem("theme") || "dark";
+
+      function setTheme(mode) {
+        if (mode === "dark") {
+          themeLink.href = "dark.css";
+          document.documentElement.style.colorScheme = "dark";
+          localStorage.setItem("theme", "dark");
+        } else {
+          themeLink.href = "light.css";
+          document.documentElement.style.colorScheme = "light";
+          localStorage.setItem("theme", "light");
+        }
+      }
+      setTheme(savedTheme);
+    </script>
+
+    <!-- Supabase Logic -->
+    <script>
+      const SUB_URL = "https://lwfxqjojwfcubzuaxfsn.supabase.co";
+      const SUB_KEY = "sb_publishable_5cJkjiZvaD_DBxmlmEM1Tg_Hon0SJy7";
+      const supabaseClient = supabase.createClient(SUB_URL, SUB_KEY);
+
+      // Check if user is in admin mode
+      const urlParams = new URLSearchParams(window.location.search);
+      const isAdmin = urlParams.get('admin') === 'true';
+
+      async function loadThoughts() {
+        const list = document.getElementById("articles-list");
+        const toolbar = document.getElementById("admin-toolbar");
+
+        // Show toolbar if admin
+        if (isAdmin) {
+            toolbar.style.display = 'flex';
+        }
+
+        try {
+          const { data: items, error } = await supabaseClient
+            .from('blogs')
+            .select('tag, title, description, date, thumbnail_url')
+            .order('id', { ascending: false });
+
+          if (error) throw error;
+
+          list.innerHTML = "";
+
+          items.forEach((item) => {
+            const div = document.createElement("div");
+            div.className = "thought-item";
+            
+            // Generate Admin buttons only if isAdmin is true
+            const adminButtons = isAdmin ? `
+              <div class="item-actions" style="display: flex;">
+                <button class="action-link edit-color" onclick="editArticle('${item.tag}')"><span class="material-symbols-outlined"> edit </span></button>
+                <button class="action-link delete-color" onclick="deleteArticle('${item.tag}')"><span class="material-symbols-outlined"> delete </span></button>
+              </div>` : '';
+
+            div.innerHTML = `
+              <a class="article-link" href="read.html#${item.tag}" style="display: flex; gap: 1rem; align-items: flex-start; margin-bottom: 1.5rem; text-decoration: none; color: inherit;">
+                  <img src="${item.thumbnail_url}" 
+                       alt="${item.title} thumbnail" 
+                       class="article-thumb"
+                       class="article-thumb"
+                       style="width: 120px; height: 80px; object-fit: cover; border-radius: 4px;"
+                       onerror="this.src='images/placeholder.png';">
+                  <div class="article-info">
+                      <h3 class="gallery-title" style="margin: 0;">${item.title}</h3>
+                      <p class="gallery-date" style="margin: 0; font-size: 0.8rem; opacity: 0.7;"><em>${item.date}</em></p>
+                  </div>
+              </a>
+              ${adminButtons}
+            `;
+            list.appendChild(div);
+          });
+        } catch (err) {
+          list.innerHTML = `<li>Could not load blogs.</li>`;
+          console.error(err);
+        }
+      }
+
+      async function deleteArticle(tag) {
+        const password = prompt("Enter Editor Password to delete this post:");
+        if (!password) return;
+
+        if (confirm(`Are you sure you want to permanently delete "${tag}"?`)) {
+          const sbAuth = supabase.createClient(SUB_URL, SUB_KEY, {
+            global: { headers: { 'x-editor-key': password } }
+          });
+
+          const { error } = await sbAuth
+            .from('blogs')
+            .delete()
+            .eq('tag', tag);
+
+          if (error) {
+            alert("Delete failed: " + error.message);
+          } else {
+            alert("Article removed.");
+            loadThoughts();
+          }
+        }
+      }
+
+      function editArticle(tag) {
+        window.location.href = `builder.html?edit=${tag}`;
+      }
+
+      loadThoughts();
+    </script>
+  </body>
+</html>

@@ -10,6 +10,9 @@
         <link id="style" rel="stylesheet" href="style.css" />
         <link rel="icon" href="images/favicon.ico" />
 
+        <!-- Supabase SDK -->
+        <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
         <link href="https://fonts.googleapis.com/css2?family=Alata&display=swap" rel="stylesheet" />
@@ -26,7 +29,7 @@
                     <a href="javascript:history.back()" class="back-btn"
                         ><span class="material-symbols-outlined"> arrow_left </span></a
                     >
-                    <a href="">home</a>
+                    <a href="index.html">home</a>
                     <a href="projects.html">projects</a>
                     <a href="blogs.html">blogs</a>
                     <a href="about.html">about</a>
@@ -40,55 +43,34 @@
             </main>
 
             <footer>
+                <p>End.</p>
                 <p>arrow left</p>
             </footer>
         </div>
 
+        <!-- Theme Script -->
         <script>
             const themeLink = document.getElementById("theme-style");
-            const toggleBtn = document.getElementById("theme-toggle");
-            const themeIcon = document.getElementById("theme-icon");
-
-            // Get the preference from the user's browser memory
-            const savedTheme = localStorage.getItem("theme");
+            const savedTheme = localStorage.getItem("theme") || "dark";
 
             function setTheme(mode) {
                 if (mode === "dark") {
                     themeLink.href = "dark.css";
                     document.documentElement.style.colorScheme = "dark";
-                    themeIcon.src = "images/sun-icon.png";
-                    themeIcon.alt = "light mode";
-                    localStorage.setItem("theme", "dark");
                 } else {
                     themeLink.href = "light.css";
                     document.documentElement.style.colorScheme = "light";
-                    themeIcon.src = "images/moon-icon.png";
-                    themeIcon.alt = "dark mode";
-                    localStorage.setItem("theme", "light");
                 }
             }
-
-            // If the user has a saved preference, use it.
-            // If they are a new visitor, force the dark theme.
-            if (savedTheme) {
-                setTheme(savedTheme);
-            } else {
-                setTheme("dark");
-            }
-
-            // Handle the click event for the theme switcher button
-            toggleBtn.addEventListener("click", () => {
-                themeIcon.style.transform = "scale(0)";
-                setTimeout(() => {
-                    const current = localStorage.getItem("theme");
-                    setTheme(current === "dark" ? "light" : "dark");
-                    void themeIcon.offsetWidth;
-                    themeIcon.style.transform = "scale(1)";
-                }, 120);
-            });
+            setTheme(savedTheme);
         </script>
 
+        <!-- Supabase Logic -->
         <script>
+            const SUB_URL = "https://lwfxqjojwfcubzuaxfsn.supabase.co";
+            const SUB_KEY = "sb_publishable_5cJkjiZvaD_DBxmlmEM1Tg_Hon0SJy7";
+            const supabaseClient = supabase.createClient(SUB_URL, SUB_KEY);
+
             async function loadArticle() {
                 const container = document.getElementById("article-content");
                 const tag = window.location.hash.substring(1);
@@ -99,46 +81,39 @@
                 }
 
                 try {
-                    // Direct fetch using the tag from the URL
-                    const fileRes = await fetch(`articles/${tag}.html`);
+                    // Fetch specifically where 'tag' matches URL hash
+                    const { data: post, error } = await supabaseClient
+                        .from('blogs')
+                        .select('title, content')
+                        .eq('tag', tag)
+                        .single();
 
-                    if (!fileRes.ok) {
+                    if (error || !post) {
                         container.innerHTML = "<p>i havent written that yet</p>";
                         return;
                     }
 
-                    const html = await fileRes.text();
+                    // Injected content from DB
+                    container.innerHTML = post.content;
 
-                    // Inject the HTML
-                    container.innerHTML = html;
-
-                    // Manually find and execute scripts within the injected HTML
+                    // Execute any scripts found in the injected HTML
                     const scripts = container.querySelectorAll("script");
                     scripts.forEach((oldScript) => {
                         const newScript = document.createElement("script");
-
-                        // Copy all attributes (src, type, etc.)
                         Array.from(oldScript.attributes).forEach((attr) => {
                             newScript.setAttribute(attr.name, attr.value);
                         });
-
-                        // Copy the script content
                         newScript.appendChild(document.createTextNode(oldScript.innerHTML));
-
-                        // Replacing the element triggers execution
                         oldScript.parentNode.replaceChild(newScript, oldScript);
                     });
 
-                    // Update page title dynamically using the tag name
-                    const formattedTitle = tag.charAt(0).toUpperCase() + tag.slice(1);
-                    document.title = `arrow left - ${formattedTitle}`;
+                    document.title = `arrow left - ${post.title}`;
                 } catch (err) {
                     container.innerHTML = "<p>i think i got distracted</p>";
                     console.error(err);
                 }
             }
 
-            // Listen for hash changes so the page updates without refreshing
             window.addEventListener("hashchange", loadArticle);
             loadArticle();
         </script>
